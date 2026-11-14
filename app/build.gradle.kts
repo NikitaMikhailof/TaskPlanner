@@ -6,6 +6,7 @@ plugins {
 android {
     namespace = "com.nikita.taskplanner"
     compileSdk = 35
+    buildToolsVersion = "35.0.0"
 
     defaultConfig {
         applicationId = "com.nikita.taskplanner"
