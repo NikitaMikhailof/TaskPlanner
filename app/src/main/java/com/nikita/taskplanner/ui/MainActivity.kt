@@ -21,6 +21,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -64,6 +65,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         db = DbHelper(this)
+        filterCategory = savedInstanceState?.getString("filter")
+        periodIndex = savedInstanceState?.getInt("period", 0) ?: 0
         adapter = TaskAdapter(
             onEdit = { showTaskDialog(it) },
             onToggle = { t, done ->
@@ -80,12 +83,13 @@ class MainActivity : AppCompatActivity() {
             .setOnClickListener { showTaskDialog(null) }
 
         findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar).apply {
-            setTitle(R.string.app_name)
-            setTitleTextColor(ContextCompat.getColor(context, R.color.green))
+            setTitle(R.string.toolbar_title)
+            setTitleTextColor(ContextCompat.getColor(context, R.color.toolbar_green))
             inflateMenu(R.menu.menu_main)
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.menu_categories -> { showCategoriesDialog(); true }
+                    R.id.menu_theme -> { toggleTheme(); true }
                     R.id.menu_export -> { exportLauncher.launch("Плановые задачи.xlsx"); true }
                     R.id.menu_import -> { importLauncher.launch(arrayOf("*/*")); true }
                     else -> false
@@ -97,6 +101,22 @@ class MainActivity : AppCompatActivity() {
         setupPeriodSpinner()
         reload()
         requestNotificationPermission()
+    }
+
+    private fun toggleTheme() {
+        val prefs = getSharedPreferences("settings", MODE_PRIVATE)
+        val dark = prefs.getBoolean("dark", true)
+        prefs.edit().putBoolean("dark", !dark).apply()
+        AppCompatDelegate.setDefaultNightMode(
+            if (dark) AppCompatDelegate.MODE_NIGHT_NO else AppCompatDelegate.MODE_NIGHT_YES
+        )
+        // setDefaultNightMode сам пересоздаёт активити
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("filter", filterCategory)
+        outState.putInt("period", periodIndex)
     }
 
     private fun reload() {

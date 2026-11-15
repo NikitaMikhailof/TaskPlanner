@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Палитра 8-битных консолей -->
-    <color name="bg">#10121A</color>
-    <color name="surface">#1B1E2B</color>
-    <color name="surface_alt">#232739</color>
+    <!-- Светлая тема (базовые значения) -->
+    <color name="bg">#D8D8C8</color>
+    <color name="surface">#F0F0E0</color>
+    <color name="surface_alt">#C8C8B8</color>
+    <color name="green">#1E7A1E</color>
+    <color name="red">#C01800</color>
+    <color name="yellow">#9A6B00</color>
+    <color name="text_primary">#14140E</color>
+    <color name="text_secondary">#3C3C34</color>
+    <color name="text_muted">#6E6E62</color>
+    <color name="danger">#C01800</color>
+    <color name="warn">#9A6B00</color>
+    <color name="ok">#1E7A1E</color>
+
+    <!-- Не зависят от темы -->
     <color name="ink">#000000</color>
-    <color name="green">#3CCC38</color>
-    <color name="red">#F83800</color>
-    <color name="yellow">#F8B800</color>
+    <color name="toolbar_green">#3CCC38</color>
     <color name="cyan">#3CBCFC</color>
-    <color name="text_primary">#FCFCFC</color>
-    <color name="text_secondary">#A8A8B8</color>
-    <color name="text_muted">#6C7086</color>
-    <color name="danger">#F83800</color>
-    <color name="warn">#F8B800</color>
-    <color name="ok">#3CCC38</color>
     <color name="launcher_background">#10121A</color>
 </resources>
