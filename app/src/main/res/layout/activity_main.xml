@@ -7,14 +7,16 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/ink"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:titleTextColor="?attr/colorOnPrimary"
+            android:background="@drawable/pixel_toolbar"
+            app:titleTextColor="@color/green"
             app:menu="@menu/menu_main" />
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -24,18 +26,38 @@
         android:orientation="vertical"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <Spinner
-            android:id="@+id/filter"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:paddingHorizontal="12dp"
-            android:background="@color/surface_alt" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/ink"
+            android:paddingBottom="4dp">
+
+            <Spinner
+                android:id="@+id/filter"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1.4"
+                android:layout_marginEnd="2dp"
+                android:background="@color/surface_alt"
+                android:popupBackground="@color/ink" />
+
+            <Spinner
+                android:id="@+id/period"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@color/surface_alt"
+                android:popupBackground="@color/ink" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
             android:paddingBottom="88dp" />
     </LinearLayout>
 
@@ -47,5 +69,7 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/new_task"
         android:src="@drawable/ic_add"
-        app:tint="?attr/colorOnPrimary" />
+        app:backgroundTint="@color/green"
+        app:shapeAppearanceOverlay="@style/PixelSquare"
+        app:tint="@color/ink" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -3,4 +3,10 @@
     <item
         android:id="@+id/menu_categories"
         android:title="@string/categories" />
+    <item
+        android:id="@+id/menu_export"
+        android:title="@string/export_xlsx" />
+    <item
+        android:id="@+id/menu_import"
+        android:title="@string/import_xlsx" />
 </menu>

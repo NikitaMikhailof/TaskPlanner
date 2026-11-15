@@ -166,4 +166,29 @@ class DbHelper(context: Context) :
     fun categoryExists(name: String): Boolean =
         readableDatabase.query(Db.CATEGORIES, null, "name = ?", arrayOf(name), null, null, null)
             .use { it.count > 0 }
+
+    // ---- Импорт: полная замена данных ----
+
+    fun replaceAll(tasks: List<Task>, categories: List<String>) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            db.delete(Db.TASKS, null, null)
+            db.delete(Db.CATEGORIES, null, null)
+            categories.forEachIndexed { i, c ->
+                db.insert(Db.CATEGORIES, null,
+                    ContentValues().apply { put("name", c); put("sort", i) })
+            }
+            for (t in tasks) {
+                db.insert(Db.TASKS, null, ContentValues().apply {
+                    put("title", t.title); put("description", t.description)
+                    put("category", t.category); put("dueDate", t.dueDate)
+                    put("priority", t.priority); put("done", if (t.done) 1 else 0)
+                })
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+    }
 }

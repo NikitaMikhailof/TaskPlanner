@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
-    android:paddingTop="12dp">
+    android:paddingTop="16dp">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -21,13 +21,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="12dp">
 
         <EditText
             android:id="@+id/etNewCategory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/pixel_input"
+            android:padding="12dp"
+            android:textSize="10sp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_muted"
             android:hint="@string/category_name"
             android:inputType="textCapSentences"
             android:importantForAutofill="no" />
@@ -37,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:textSize="10sp"
             android:text="@string/add" />
     </LinearLayout>
 </LinearLayout>

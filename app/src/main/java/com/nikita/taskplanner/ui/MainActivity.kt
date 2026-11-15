@@ -3,6 +3,7 @@ package com.nikita.taskplanner.ui
 import android.Manifest
 import android.app.DatePickerDialog
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -26,19 +28,36 @@ import com.nikita.taskplanner.R
 import com.nikita.taskplanner.db.Db
 import com.nikita.taskplanner.db.DbHelper
 import com.nikita.taskplanner.db.Task
+import com.nikita.taskplanner.db.Xlsx
 import com.nikita.taskplanner.work.ReminderWorker.Companion.daysLeft
 import com.nikita.taskplanner.work.ReminderWorker.Companion.startOfDay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var db: DbHelper
     private lateinit var adapter: TaskAdapter
     private var filterCategory: String? = null // null = все категории
+    private var periodIndex = 0                // 0 весь срок, 1 неделя, 2 две недели, 3 месяц, 4 больше месяца
 
     private val dateFmt = SimpleDateFormat("dd.MM.yyyy", Locale("ru"))
+
+    private val XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+    private val exportLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument(XLSX_MIME)
+    ) { uri: Uri? ->
+        if (uri != null) exportTo(uri)
+    }
+
+    private val importLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        if (uri != null) importFrom(uri)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,19 +81,100 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar).apply {
             setTitle(R.string.app_name)
+            setTitleTextColor(ContextCompat.getColor(context, R.color.green))
             inflateMenu(R.menu.menu_main)
             setOnMenuItemClickListener { item ->
-                if (item.itemId == R.id.menu_categories) { showCategoriesDialog(); true } else false
+                when (item.itemId) {
+                    R.id.menu_categories -> { showCategoriesDialog(); true }
+                    R.id.menu_export -> { exportLauncher.launch("Плановые задачи.xlsx"); true }
+                    R.id.menu_import -> { importLauncher.launch(arrayOf("*/*")); true }
+                    else -> false
+                }
             }
         }
 
         setupFilterSpinner()
+        setupPeriodSpinner()
         reload()
         requestNotificationPermission()
     }
 
     private fun reload() {
-        adapter.submit(db.tasks(filterCategory))
+        var list = db.tasks(filterCategory)
+        val today = startOfDay(System.currentTimeMillis())
+        list = when (periodIndex) {
+            1 -> list.filter { it.dueDate <= today + TimeUnit.DAYS.toMillis(7) }
+            2 -> list.filter { it.dueDate <= today + TimeUnit.DAYS.toMillis(14) }
+            3 -> list.filter { it.dueDate <= today + TimeUnit.DAYS.toMillis(30) }
+            4 -> list.filter { it.dueDate > today + TimeUnit.DAYS.toMillis(30) }
+            else -> list
+        }
+        adapter.submit(list)
+    }
+
+    private fun spinnerAdapter(items: List<String>): ArrayAdapter<String> {
+        val a = ArrayAdapter(this, R.layout.spinner_item, items)
+        a.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        return a
+    }
+
+    private fun setupPeriodSpinner() {
+        val spinner = findViewById<Spinner>(R.id.period)
+        val items = listOf(
+            getString(R.string.period_all),
+            getString(R.string.period_week),
+            getString(R.string.period_2week),
+            getString(R.string.period_month),
+            getString(R.string.period_more)
+        )
+        spinner.adapter = spinnerAdapter(items)
+        spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p: android.widget.AdapterView<*>?, v: View?, pos: Int, id: Long) {
+                periodIndex = pos
+                reload()
+            }
+            override fun onNothingSelected(p: android.widget.AdapterView<*>?) {}
+        }
+    }
+
+    // ---------- Экспорт / импорт .xlsx ----------
+
+    private fun exportTo(uri: Uri) {
+        try {
+            contentResolver.openOutputStream(uri)?.use { out ->
+                Xlsx.write(out, db.tasks(null))
+            }
+            Toast.makeText(this, R.string.export_ok, Toast.LENGTH_SHORT).show()
+        } catch (_: Exception) {
+            Toast.makeText(this, R.string.export_err, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun importFrom(uri: Uri) {
+        val parsed = try {
+            val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            bytes?.let { Xlsx.read(it) }
+        } catch (_: Exception) {
+            null
+        }
+        if (parsed == null) {
+            Toast.makeText(this, R.string.import_err, Toast.LENGTH_SHORT).show()
+            return
+        }
+        val (categories, tasks) = parsed
+        AlertDialog.Builder(this)
+            .setMessage(getString(R.string.import_confirm))
+            .setPositiveButton(R.string.save) { _, _ ->
+                db.replaceAll(tasks, categories)
+                filterCategory = null
+                periodIndex = 0
+                setupFilterSpinner()
+                setupPeriodSpinner()
+                reload()
+                Toast.makeText(this, getString(R.string.import_ok, tasks.size), Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun setupFilterSpinner() {
@@ -84,7 +184,7 @@ class MainActivity : AppCompatActivity() {
             cats.add(Db.NO_CATEGORY)
         }
         val items = mutableListOf("Все категории") + cats
-        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
+        spinner.adapter = spinnerAdapter(items)
         spinner.setSelection(items.indexOf(filterCategory).coerceAtLeast(0))
         spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p: android.widget.AdapterView<*>?, v: View?, pos: Int, id: Long) {
@@ -113,9 +213,7 @@ class MainActivity : AppCompatActivity() {
 
         fun rebuildCategorySpinner() {
             categoryItems = db.categories() + Db.NO_CATEGORY + newCategoryLabel
-            spCategory.adapter = ArrayAdapter(
-                this, android.R.layout.simple_spinner_dropdown_item, categoryItems
-            )
+            spCategory.adapter = spinnerAdapter(categoryItems)
             suppressCatListener = true
             spCategory.setSelection(categoryItems.indexOf(currentCategory).coerceAtLeast(0))
             suppressCatListener = false

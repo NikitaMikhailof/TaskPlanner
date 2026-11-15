@@ -29,6 +29,19 @@
     <string name="notif_channel">Напоминания о сроках</string>
     <string name="notif_title">Напоминание о задаче</string>
 
+    <string name="export_xlsx">Экспорт в .xlsx</string>
+    <string name="import_xlsx">Импорт из .xlsx</string>
+    <string name="export_ok">Файл сохранён</string>
+    <string name="export_err">Не удалось сохранить файл</string>
+    <string name="import_ok">Загружено задач: %1$d</string>
+    <string name="import_err">Не удалось прочитать файл</string>
+    <string name="import_confirm">Заменить текущие задачи и категориями из файла? Текущие данные будут удалены.</string>
+    <string name="period_all">Весь срок</string>
+    <string name="period_week">Неделя</string>
+    <string name="period_2week">2 недели</string>
+    <string name="period_month">Месяц</string>
+    <string name="period_more">Больше месяца</string>
+
     <string-array name="priorities">
         <item>Низкий</item>
         <item>Средний</item>
