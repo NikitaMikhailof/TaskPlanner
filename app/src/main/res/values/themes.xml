@@ -1,49 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="PixelSquare" parent="">
-        <item name="cornerFamily">cut</item>
-        <item name="cornerSize">0dp</item>
-    </style>
-
-    <style name="Theme.TaskPlanner" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/green</item>
-        <item name="colorOnPrimary">@color/ink</item>
-        <item name="colorSecondary">@color/cyan</item>
-        <item name="colorSurface">@color/surface</item>
+    <style name="Theme.TaskPlanner" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
         <item name="android:colorBackground">@color/bg</item>
         <item name="android:windowBackground">@color/bg</item>
-        <item name="android:statusBarColor">@color/ink</item>
-        <item name="android:navigationBarColor">@color/ink</item>
-        <item name="android:fontFamily">@font/press_start2p</item>
-        <item name="fontFamily">@font/press_start2p</item>
-        <!-- Квадратные углы везде, как на 8-битных консолях -->
-        <item name="shapeAppearanceCornerExtraSmall">@style/PixelSquare</item>
-        <item name="shapeAppearanceCornerSmall">@style/PixelSquare</item>
-        <item name="shapeAppearanceCornerMedium">@style/PixelSquare</item>
-        <item name="shapeAppearanceCornerLarge">@style/PixelSquare</item>
-        <item name="shapeAppearanceCornerExtraLarge">@style/PixelSquare</item>
-        <item name="alertDialogTheme">@style/PixelDialog</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="alertDialogTheme">@style/AppDialog</item>
     </style>
 
-    <style name="PixelDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="colorPrimary">@color/green</item>
-        <item name="colorOnPrimary">@color/ink</item>
-        <item name="colorSurface">@color/surface</item>
-        <item name="android:windowBackground">@drawable/pixel_dialog_bg</item>
-        <item name="android:fontFamily">@font/press_start2p</item>
-        <item name="materialAlertDialogTitleTextStyle">@style/PixelDialogTitle</item>
-        <item name="materialAlertDialogBodyTextStyle">@style/PixelDialogBody</item>
-    </style>
-
-    <style name="PixelDialogTitle" parent="MaterialAlertDialog.Material3.Title.Text">
-        <item name="android:textColor">@color/green</item>
-        <item name="android:textSize">13sp</item>
-        <item name="android:fontFamily">@font/press_start2p</item>
-    </style>
-
-    <style name="PixelDialogBody" parent="MaterialAlertDialog.Material3.Body.Text">
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:textSize">11sp</item>
-        <item name="android:fontFamily">@font/press_start2p</item>
-    </style>
+    <style name="AppDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog" />
 </resources>

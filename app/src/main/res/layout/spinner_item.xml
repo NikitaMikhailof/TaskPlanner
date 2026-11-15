@@ -4,5 +4,5 @@
     android:layout_height="48dp"
     android:gravity="center_vertical"
     android:paddingHorizontal="12dp"
-    android:textSize="9sp"
+    android:textSize="14sp"
     android:textColor="@color/text_primary" />

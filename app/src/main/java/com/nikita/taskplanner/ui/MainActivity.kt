@@ -21,7 +21,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -82,35 +81,28 @@ class MainActivity : AppCompatActivity() {
         findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fab)
             .setOnClickListener { showTaskDialog(null) }
 
+        val drawer = findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer)
         findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar).apply {
-            setTitle(R.string.toolbar_title)
-            setTitleTextColor(ContextCompat.getColor(context, R.color.toolbar_green))
-            inflateMenu(R.menu.menu_main)
-            setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.menu_categories -> { showCategoriesDialog(); true }
-                    R.id.menu_theme -> { toggleTheme(); true }
-                    R.id.menu_export -> { exportLauncher.launch("Плановые задачи.xlsx"); true }
-                    R.id.menu_import -> { importLauncher.launch(arrayOf("*/*")); true }
-                    else -> false
-                }
-            }
+            setTitle(R.string.app_name)
+            setTitleTextColor(ContextCompat.getColor(context, R.color.text_primary))
+            setNavigationIcon(R.drawable.ic_menu)
+            setNavigationOnClickListener { drawer.openDrawer(androidx.core.view.GravityCompat.START) }
         }
+        findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav)
+            .setNavigationItemSelectedListener { item ->
+                drawer.closeDrawer(androidx.core.view.GravityCompat.START)
+                when (item.itemId) {
+                    R.id.menu_categories -> showCategoriesDialog()
+                    R.id.menu_export -> exportLauncher.launch("Плановые задачи.xlsx")
+                    R.id.menu_import -> importLauncher.launch(arrayOf("*/*"))
+                }
+                true
+            }
 
         setupFilterSpinner()
         setupPeriodSpinner()
         reload()
         requestNotificationPermission()
-    }
-
-    private fun toggleTheme() {
-        val prefs = getSharedPreferences("settings", MODE_PRIVATE)
-        val dark = prefs.getBoolean("dark", true)
-        prefs.edit().putBoolean("dark", !dark).apply()
-        AppCompatDelegate.setDefaultNightMode(
-            if (dark) AppCompatDelegate.MODE_NIGHT_NO else AppCompatDelegate.MODE_NIGHT_YES
-        )
-        // setDefaultNightMode сам пересоздаёт активити
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

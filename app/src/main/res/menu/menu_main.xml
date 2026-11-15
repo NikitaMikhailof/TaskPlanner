@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_theme"
-        android:title="@string/toggle_theme"
-        android:icon="@drawable/ic_theme"
-        android:showAsAction="always" />
+        android:id="@+id/menu_categories"
+        android:icon="@drawable/ic_folder"
+        android:title="@string/categories" />
     <item
         android:id="@+id/menu_export"
-        android:title="@string/export_xlsx"
         android:icon="@drawable/ic_export"
-        android:showAsAction="always" />
+        android:title="@string/export_xlsx" />
     <item
         android:id="@+id/menu_import"
-        android:title="@string/import_xlsx"
         android:icon="@drawable/ic_import"
-        android:showAsAction="always" />
-    <item
-        android:id="@+id/menu_categories"
-        android:title="@string/categories" />
+        android:title="@string/import_xlsx" />
 </menu>

@@ -31,8 +31,6 @@
 
     <string name="export_xlsx">Экспорт в .xlsx</string>
     <string name="import_xlsx">Импорт из .xlsx</string>
-    <string name="toggle_theme">Светлая / тёмная тема</string>
-    <string name="toolbar_title">ЗАДАЧИ</string>
     <string name="export_ok">Файл сохранён</string>
     <string name="export_err">Не удалось сохранить файл</string>
     <string name="import_ok">Загружено задач: %1$d</string>
